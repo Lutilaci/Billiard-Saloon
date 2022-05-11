@@ -5,10 +5,11 @@ import com.codecool.biliardsaloon.tableType.BilliardTable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class Order {
 
-    private int orderId = 1;
+    private String orderId;
     private List<Consumable> orderList;
     private BilliardTable table;
     protected int startGameAt;
@@ -18,7 +19,7 @@ public class Order {
 
     public Order(BilliardTable table){
         this.table = table;
-        this.orderId++;
+        this.orderId = UUID.randomUUID().toString();
         setStartGameAt();
     }
 
@@ -78,7 +79,7 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order no.: " + orderId + "\n" +
+        return "Order id: " + orderId + "\n" +
                 "table = " + table + "\n" +
                 "hours = " + howManyHours() + "\n" +
                 "table price = " + calculateTablePrice() + "\n" +
