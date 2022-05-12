@@ -20,6 +20,7 @@ public class Order {
         this.table = table;
         this.orderId = UUID.randomUUID().toString();
         this.startGameAt = LocalDateTime.now().minusHours(5);;
+        setStartGameAt();
     }
 
     public void orderConsumable(Consumable consumable){
