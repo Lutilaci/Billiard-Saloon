@@ -2,24 +2,24 @@ package com.codecool.biliardsaloon;
 
 import com.codecool.biliardsaloon.tableType.BilliardTable;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.UUID;
 
 public class Order {
 
-    private int orderId = 1;
+    private String orderId;
     private List<Consumable> orderList;
     private BilliardTable table;
-    protected int startGameAt;
-    protected int endGameAt;
-    int low = 1;
-    int high = 5;
+    protected LocalDateTime startGameAt;
+    protected LocalDateTime endGameAt;
 
     public Order(BilliardTable table){
         this.table = table;
-        this.orderId++;
-        setStartGameAt();
+        this.orderId = UUID.randomUUID().toString();
+        this.startGameAt = LocalDateTime.now().minusHours(5);;
     }
 
     public void orderConsumable(Consumable consumable){
@@ -29,30 +29,20 @@ public class Order {
         orderList.add(consumable);
     }
 
-    public void setStartGameAt() {
-        Random random = new Random();
-        this.startGameAt = random.nextInt(low);
-    }
-
-    public void setEndGameAt(){
-        Random random = new Random();
-        this.endGameAt = random.nextInt(high-low) + low;
-    }
 
     public void stopPlaying(){
-        setEndGameAt();
-        table.setAvailable();
+        endGameAt = LocalDateTime.now();
+        table.release();
     }
 
     public int calculateTablePrice(){
-        int price = (endGameAt - startGameAt) * table.getPricePerHour() ;
-        return price;
+        return howManyHours() * table.getPricePerHour() ;
     }
 
     public int calculateConsumablePrice(){
         int consumablePrice = 0;
         for(Consumable consumable: orderList){
-            consumablePrice += consumable.price;
+            consumablePrice += consumable.getPrice();
         }
         return consumablePrice;
     }
@@ -62,15 +52,15 @@ public class Order {
     }
 
     public int howManyHours(){
-        return endGameAt - startGameAt;
+        return (int) (Duration.between(startGameAt, LocalDateTime.now()).toHours());
     }
 
     public StringBuilder consumableList(){
         StringBuilder cl = new StringBuilder();
         for(Consumable consumable: orderList){
-            cl.append(consumable.name);
+            cl.append(consumable.getName());
             cl.append(" - ");
-            cl.append(consumable.price);
+            cl.append(consumable.getPrice());
             cl.append(", ");
         }
         return cl;
@@ -78,8 +68,8 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order no.: " + orderId + "\n" +
-                "table = " + table + "\n" +
+        return "Order id: " + orderId + "\n" +
+                "table = " + table.getName() + "\n" +
                 "hours = " + howManyHours() + "\n" +
                 "table price = " + calculateTablePrice() + "\n" +
                 "orderList = " + consumableList() + "\n" +

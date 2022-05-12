@@ -1,9 +1,15 @@
 package com.codecool.biliardsaloon.tableType;
 
+import java.time.LocalDateTime;
+
 public class Snooker extends BilliardTable{
 
+    public Snooker(TableType type) {
+        super(type, 1600, "Snooker");
+    }
 
-    public Snooker(String type) {
-        super(type, 1600);
+    @Override
+    boolean isAvailable() {
+        return LocalDateTime.now().getHour() >= 18 && isAvailable;
     }
 }
